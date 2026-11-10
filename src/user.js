@@ -1,6 +1,14 @@
-class User {
+    class User {
+    name;
 
-}
+    constructor(name) {
+        this.name = name;
+    }
 
-export { User };
-export default User;
+    read(text) {
+        return `${this.name} is reading ${text}`;
+    }
+    }
+
+    export { User };
+    export default User;
