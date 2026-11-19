@@ -1,19 +1,17 @@
-class newspaper{
-    name = "Diario de Avisos";
-    district = "Santa Cruz de Tenerife";
-    price = 1;
-    #number = 0;
+import PaidPost from "./paid-post.js";
 
-    constructor(name, price, district){
-        this.name = name;
-        this.district = district;
-        this.price = price;
-    }
+class Newspaper extends PaidPost {
+  district;
 
-    get summary(){
-        return `${this.name} publication number ${this.#number} of ${this.district}`
-    }
+  constructor(name, price, district) {
+    super(name, price);
+    this.district = district;
+  }
+
+  get summary() {
+    return `${super.summary} of ${this.district}`;
+  }
 }
 
-export { newspaper };
-export default newspaper;
+export { Newspaper, Newspaper as newspaper };
+export default Newspaper;

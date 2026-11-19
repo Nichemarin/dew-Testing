@@ -1,14 +1,18 @@
-    class User {
-    name;
+class User {
+  name;
 
-    constructor(name) {
-        this.name = name;
-    }
+  constructor(name) {
+    this.name = name;
+  }
 
-    read(text) {
-        return `${this.name} is reading ${text}`;
-    }
-    }
+  read(text) {
+    return `${this.name} is reading ${text}`;
+  }
 
-    export { User };
-    export default User;
+  notify(post) {
+    return this.read(post.summary);
+  }
+}
+
+export { User };
+export default User;

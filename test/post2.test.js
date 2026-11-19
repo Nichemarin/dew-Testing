@@ -12,6 +12,12 @@ test('Attach a user', () => {
   expect(post.getSubscribers()).toBe('Pepe')
 })
 
+test('Do not attach an object that is not a user', () => {
+  const post = new Post('Total JS')
+  post.attach({ name: 'Pepe' })
+  expect(post.getSubscribers()).toBe('')
+})
+
 test('Attach 2 users', () => {
   const post = new Post('Total JS')
   const pepe = new User('Pepe')

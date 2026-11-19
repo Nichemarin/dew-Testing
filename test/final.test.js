@@ -1,114 +1,68 @@
 /* eslint-env jest */
 
-import User from '../src/user.js';import Client from '../src/client.js';import Gazette from '../src/gazette.js';import Magazine from '../src/magazine.js';import Newspaper from '../src/newspaper.js';const gazette = new Gazette('The Streetlight')
-const magazine = new Magazine('Total JS', 2.99, 'Programming')
-const diario = new Newspaper('Diario de Avisos', 1.15, 'Santa Cruz de Tenerife')
-const provincia = new Newspaper('La Provincia', 0.99, 'Las Palmas')
+import Client from "../src/client.js";
+import Gazette from "../src/gazette.js";
+import Magazine from "../src/magazine.js";
+import Newspaper from "../src/newspaper.js";
+import User from "../src/user.js";
 
-const pepe = new Client('Pepe')
-const mary = new Client('Mary')
-const lucy = new User('Lucy')
-const toby = new Client('Toby')
-const ann = new Client('Ann')
+test("A free publication notifies subscribers without billing them", () => {
+  const gazette = new Gazette("The Streetlight");
+  const pepe = new Client("Pepe");
+  const lucy = new User("Lucy");
+  gazette.attach(pepe);
+  gazette.attach(lucy);
 
-// Pepe, Mary, Lucy and Toby have subscribed to The Streetlight.
-gazette.attach(pepe)
-gazette.attach(mary)
-gazette.attach(lucy)
-gazette.attach(toby)
+  const reading = gazette.publish();
 
-// Mary and Toby have subscribed to Total JS.
-magazine.attach(mary)
-magazine.attach(toby)
+  expect(reading).toContain(
+    "Pepe is reading The Streetlight publication number 1",
+  );
+  expect(reading).toContain(
+    "Lucy is reading The Streetlight publication number 1",
+  );
+  expect(pepe.billing).toBe(0);
+});
 
-// Mary, Toby and Ann have subscriber to Diario de Avisos
-diario.attach(mary)
-diario.attach(toby)
-diario.attach(ann)
+test("A paid publication only notifies its client subscribers", () => {
+  const magazine = new Magazine("Total JS", 2.99, "Programming");
+  const pepe = new Client("Pepe");
+  const lucy = new User("Lucy");
+  magazine.attach(pepe);
+  magazine.attach(lucy);
 
-// Pepe has subscriber to La Provincia
-provincia.attach(pepe)
+  const reading = magazine.publish();
 
-test('La Provincia has been published', () => {
-  const reading = provincia.publish()
-  expect(reading).toContain('Pepe is reading La Provincia publication number 1 of Las Palmas')
-  expect(reading).not.toContain('Mary is reading La Provincia publication number 1 of Las Palmas')
-  expect(reading).not.toContain('Lucy is reading La Provincia publication number 1 of Las Palmas')
-  expect(reading).not.toContain('Toby is reading La Provincia publication number 1 of Las Palmas')
-  expect(reading).not.toContain('Ann is reading La Provincia publication number 1 of Las Palmas')
-  expect(pepe.billing).toBe(0.99)
-  expect(mary.billing).toBe(0)
-  expect(lucy.billing).toBeUndefined()
-  expect(toby.billing).toBe(0)
-  expect(ann.billing).toBe(0)
-})
+  expect(reading).toEqual([
+    "Pepe is reading Total JS publication number 1 of Programming",
+  ]);
+  expect(pepe.billing).toBe(2.99);
+});
 
-test('La Provincia has been published again', () => {
-  const reading = provincia.publish()
-  expect(reading).toContain('Pepe is reading La Provincia publication number 2 of Las Palmas')
-  expect(reading).not.toContain('Mary is reading La Provincia publication number 2 of Las Palmas')
-  expect(reading).not.toContain('Lucy is reading La Provincia publication number 2 of Las Palmas')
-  expect(reading).not.toContain('Toby is reading La Provincia publication number 2 of Las Palmas')
-  expect(reading).not.toContain('Ann is reading La Provincia publication number 2 of Las Palmas')
-  expect(pepe.billing).toBe(1.98)
-  expect(mary.billing).toBe(0)
-  expect(lucy.billing).toBeUndefined()
-  expect(toby.billing).toBe(0)
-  expect(ann.billing).toBe(0)
-})
+test("Publishing again advances the publication number and charges again", () => {
+  const newspaper = new Newspaper(
+    "Diario de Avisos",
+    1.15,
+    "Santa Cruz de Tenerife",
+  );
+  const mary = new Client("Mary");
+  newspaper.attach(mary);
 
-test('The Streetlight has been published', () => {
-  const reading = gazette.publish()
-  expect(reading).toContain('Pepe is reading The Streetlight publication number 1')
-  expect(reading).toContain('Mary is reading The Streetlight publication number 1')
-  expect(reading).toContain('Lucy is reading The Streetlight publication number 1')
-  expect(reading).toContain('Toby is reading The Streetlight publication number 1')
-  expect(reading).not.toContain('Ann is reading The Streetlight publication number 1')
-  expect(pepe.billing).toBe(1.98)
-  expect(mary.billing).toBe(0)
-  expect(lucy.billing).toBeUndefined()
-  expect(toby.billing).toBe(0)
-  expect(ann.billing).toBe(0)
-})
+  expect(newspaper.publish()).toEqual([
+    "Mary is reading Diario de Avisos publication number 1 of Santa Cruz de Tenerife",
+  ]);
+  expect(newspaper.publish()).toEqual([
+    "Mary is reading Diario de Avisos publication number 2 of Santa Cruz de Tenerife",
+  ]);
+  expect(mary.billing).toBe(2.3);
+});
 
-test('Diario de Avisos has been published', () => {
-  const reading = diario.publish()
-  expect(reading).not.toContain('Pepe is reading Diario de Avisos publication number 1 of Santa Cruz de Tenerife')
-  expect(reading).toContain('Mary is reading Diario de Avisos publication number 1 of Santa Cruz de Tenerife')
-  expect(reading).not.toContain('Lucy is reading Diario de Avisos publication number 1 of Santa Cruz de Tenerife')
-  expect(reading).toContain('Toby is reading Diario de Avisos publication number 1 of Santa Cruz de Tenerife')
-  expect(reading).toContain('Ann is reading Diario de Avisos publication number 1 of Santa Cruz de Tenerife')
-  expect(pepe.billing).toBe(1.98)
-  expect(mary.billing).toBe(1.15)
-  expect(lucy.billing).toBeUndefined()
-  expect(toby.billing).toBe(1.15)
-  expect(ann.billing).toBe(1.15)
-})
+test("Each publication instance starts with its own number", () => {
+  const first = new Gazette("First");
+  const second = new Gazette("Second");
 
-test('Total JS has been published', () => {
-  const reading = magazine.publish()
-  expect(reading).not.toContain('Pepe is reading Total JS publication number 1 of Programming')
-  expect(reading).toContain('Mary is reading Total JS publication number 1 of Programming')
-  expect(reading).not.toContain('Lucy is reading Total JS publication number 1 of Programming')
-  expect(reading).toContain('Toby is reading Total JS publication number 1 of Programming')
-  expect(reading).not.toContain('Ann is reading Total JS publication number 1 of Programming')
-  expect(pepe.billing).toBe(1.98)
-  expect(mary.billing).toBe(4.14)
-  expect(lucy.billing).toBeUndefined()
-  expect(toby.billing).toBe(4.14)
-  expect(ann.billing).toBe(1.15)
-})
+  first.publish();
 
-test('Diario de Avisos has been published again (2)', () => {
-  const reading = diario.publish()
-  expect(reading).not.toContain('Pepe is reading Diario de Avisos publication number 2 of Santa Cruz de Tenerife')
-  expect(reading).toContain('Mary is reading Diario de Avisos publication number 2 of Santa Cruz de Tenerife')
-  expect(reading).not.toContain('Lucy is reading Diario de Avisos publication number 2 of Santa Cruz de Tenerife')
-  expect(reading).toContain('Toby is reading Diario de Avisos publication number 2 of Santa Cruz de Tenerife')
-  expect(reading).toContain('Ann is reading Diario de Avisos publication number 2 of Santa Cruz de Tenerife')
-  expect(pepe.billing).toBe(1.98)
-  expect(mary.billing).toBe(5.29)
-  expect(lucy.billing).toBeUndefined()
-  expect(toby.billing).toBe(5.29)
-  expect(ann.billing).toBe(2.3)
-})
+  expect(first.summary).toBe("First publication number 1");
+  expect(second.summary).toBe("Second publication number 0");
+});

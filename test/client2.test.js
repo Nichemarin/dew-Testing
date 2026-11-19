@@ -22,7 +22,7 @@ test('Notificar a un cliente una gazeta, una revista y un periódico 2 veces', (
   user.notify(magazine)
   expect(user.billing).toBe(2.99)
   user.notify(newspaper)
-  expect(user.billing).toEqual(4.14)
+  expect(user.billing).toBe(4.14)
   user.notify(gazette)
   expect(user.billing).toBe(4.14)
   user.notify(newspaper)

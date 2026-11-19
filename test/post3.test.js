@@ -5,7 +5,9 @@ import Post from '../src/post.js';import User from '../src/user.js';import Clien
   const pepe = new User('Pepe')
   post.attach(pepe)
   expect(post.getSubscribers()).toBe('Pepe')
-  expect(post.publish()).toContain('Pepe is reading Total JS publication number 1')
+  expect(post.publish()).toEqual([
+    'Pepe is reading Total JS publication number 1'
+  ])
 })
 
 test('Create Post, attach two users and publish', () => {
@@ -15,14 +17,16 @@ test('Create Post, attach two users and publish', () => {
   post.attach(pepe)
   post.attach(mary)
   const reading = post.publish()
-  expect(reading).toContain('Pepe is reading Total JS publication number 1')
-  expect(reading).toContain('Mary is reading Total JS publication number 1')
+  expect(reading).toEqual([
+    'Pepe is reading Total JS publication number 1',
+    'Mary is reading Total JS publication number 1'
+  ])
 })
 
 test('Create Post: 1. Publish. 2- Attach one users and publish. 3- Attach a client and publish', () => {
   const post = new Post('Total JS')
   let reading = post.publish('')
-  expect(reading).toHaveLength(0)
+  expect(reading).toEqual([])
   const pepe = new User('Pepe')
   post.attach(pepe)
   reading = post.publish()
@@ -38,7 +42,7 @@ test('Create Post: 1. Publish. 2- Attach one users and publish. 3- Attach a clie
 test('Create Magazine: 1. Publish. 2- Attach two clients and publish. 3- Attach a user and publish. 4- Detach a client and publish', () => {
   const post = new Magazine('Total JS', 2.99, 'Programming')
   let reading = post.publish('')
-  expect(reading).toHaveLength(0)
+  expect(reading).toEqual([])
   const pepe = new Client('Pepe')
   post.attach(pepe)
   const mary = new Client('Mary')

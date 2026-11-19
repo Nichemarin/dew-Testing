@@ -1,19 +1,17 @@
-class magazine{
-    name;
-    topic;
-    price;
-    #number = 0;
+import PaidPost from "./paid-post.js";
 
-    constructor (name, price, topic){
-        this.name = name;
-        this.topic = topic;
-        this.price = price;
-    }
+class Magazine extends PaidPost {
+  topic;
 
-     get summary(){
-        return `${this.name} publication number ${this.#number} of ${this.topic}`
-    }
+  constructor(name, price, topic) {
+    super(name, price);
+    this.topic = topic;
+  }
+
+  get summary() {
+    return `${super.summary} of ${this.topic}`;
+  }
 }
 
-export { magazine };
-export default magazine;
+export { Magazine, Magazine as magazine };
+export default Magazine;

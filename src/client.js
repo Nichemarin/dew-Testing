@@ -1,15 +1,19 @@
 import User from "./user.js";
 
-class Client {
+class Client extends User {
   billing;
-  name;
+
   constructor(name) {
-    this.name = name;
+    super(name);
     this.billing = 0;
   }
 
-  read(text) {
-    return `${this.name} is reading ${text}`;
+  notify(post) {
+    if (typeof post.price === "number") {
+      this.billing = Math.round((this.billing + post.price) * 100) / 100;
+    }
+
+    return super.notify(post);
   }
 }
 
